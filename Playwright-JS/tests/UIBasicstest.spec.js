@@ -27,6 +27,43 @@ test('First Playwright test', async ({browser})=> {
     const allTitles = await cardTitles.allTextContents();
     console.log(allTitles);
 
+} );
+
+test('Browser Context Playwright test 2', async ({browser})=> {
+    // chrome - plugins/ cookies
+
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    const userName = page.locator('#username');
+    const signIn = page.locator("#signInBtn");
+    const cardTitles = page.locator(".card-body a");
+
+    await page.goto('https://www.rahulshettyacademy.com/loginpagePractise/');
+    // css, xpath
+    await userName.type("rahulshettyacemy");
+    await page.locator("#password").type("learning");
+    await signIn.click();
+    // wait until this locator shown up page
+    console.log(await page.locator("[style*='block']").textContent());
+    await expect(page.locator("[style*='block']")).toContainText("Incorrect");
+    // type - fill
+    await userName.fill("");
+    await userName.fill("rahulshettyacademy");
+    
+    // Race Condition
+    await Promise.all(
+        [
+            page.waitForNavigation(),
+            signIn.click(),
+        ]
+    );
+
+    // console.log(await cardTitles.first().textContent());
+    // console.log(await cardTitles.nth(1).textContent());
+    const allTitles = await cardTitles.allTextContents();
+    console.log(allTitles);
+
 
 
     
@@ -37,7 +74,7 @@ test('First Playwright test', async ({browser})=> {
 
 } );
 
-test.only('Register Playwright test', async ({browser})=> {
+test('Register Playwright test', async ({browser})=> {
     // chrome - plugins/ cookies
 
     const context = await browser.newContext();
@@ -76,19 +113,4 @@ test.only('Register Playwright test', async ({browser})=> {
     await registerButton.click();
     
 } );
-
-test('Page Playwright test', async ({page})=> {
-    // chrome - plugins/ cookies
-    // const context = await browser.newContext();
-    // const page = context.newPage();
-
-    await page.goto('https://www.google.com');
-    // get title - assertion
-    console.log(await page.title());
-    await expect(page).toHaveTitle("Google");
-
-
-} );
-
-
 
